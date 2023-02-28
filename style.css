@@ -1,0 +1,18 @@
+.node {
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgb(175, 216, 248);
+    display: inline-block;
+}
+.line {
+    margin: 0;
+    padding: 0;
+}
+.ground{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.wall {
+    background-color: blue;
+}
