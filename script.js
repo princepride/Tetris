@@ -32,29 +32,86 @@ for(let i = 0; i < ROW; i++) {
 container.appendChild(ground);
 // centre point (1, 4)
 const generateTetris = (x, y) => {
-    let a = Math.random()*6;
+    let a = Math.random()*7;
+    //长条
     if (a <= 1) {
-        return [[x,y],[x+1,y],[x,y+1],[x+1,y+1]]
+        return [
+            [x, y],
+            [x - 1, y],
+            [x + 1, y],
+            [x + 2, y]
+          ]
     }
+    //方形
     else if (a <= 2){
-        return [[x,y+1],[x+1,y+1],[x-1,y+1],[x+2,y+1]]
+        return [
+            [x, y], 
+            [x, y + 1], 
+            [x + 1, y], 
+            [x + 1, y + 1]
+          ]
     }
+    //L型
     else if (a <= 3){
-        return [[x,y],[x+1,y],[x+1,y+1],[x+1,y+2]]
+        return [
+            [x, y], 
+            [x, y + 1], 
+            [x, y - 1], 
+            [x + 1, y - 1]
+          ]
     }
+    //反L
     else if (a <= 4){
-        return [[x+1,y],[x+1,y-1],[x+1,y+1],[x,y+1]]
+        return [
+            [x, y], 
+            [x, y + 1], 
+            [x, y - 1], 
+            [x - 1, y - 1]
+          ]
     }
+    //Z型
     else if (a <= 5){
-        return [[x,y],[x+1,y],[x+1,y+1],[x+1,y-1]]
+        return [
+            [x, y], 
+            [x, y + 1], 
+            [x + 1, y + 1], 
+            [x - 1, y]
+          ]
     }
+    //反Z
+    else if (a <= 6){
+        return [
+            [x, y], 
+            [x, y + 1], 
+            [x - 1, y + 1], 
+            [x + 1, y]
+          ]
+    }
+    //T型
     else {
-        return [[x,y],[x,y-1],[x+1,y],[x+1,y+1]]
+        return [
+            [x, y], 
+            [x, y + 1], 
+            [x, y - 1], 
+            [x + 1, y]
+          ]
     }
 }
 
-const turnLeft = (x, y, moveable) => {
-    return moveable.map((item)=>[item[1]-y+x,item[0]-x+y])
+const rotate_point_around_center = (x, y, moveable, clockwise=true) => {
+    return moveable.map((item)=>{
+        //计算相对于中心点的偏移量
+        dx = item[0] - x
+        dy = item[1] - y
+        // 顺时针旋转90度
+        if(clockwise){
+            return [x + dy, y - dx]
+        }
+        // 逆时针旋转90度
+        else{
+            return [x - dy, y + dx]
+        }
+    })
 }
 
 const arr = [];
@@ -64,16 +121,29 @@ for (let i = 0; i < ROW; i++) {
     arr[i][j] = false;
   }
 }
-let moveable = [[0,0]];
-arr[moveable[0][0]][moveable[0][1]] = true;
-document.querySelector('#node'+moveable[0][0]+'-'+moveable[0][1]).classList.add('wall');
+const render = () => {
+    for(let i = 0; i < ROW; i++) {
+        for(let j = 0; j < COLUMN; j++) {
+            document.querySelector('#node'+i+'-'+j).classList.remove('wall');
+            if(arr[i][j]){
+                document.querySelector('#node'+i+'-'+j).classList.add('wall');
+            }
+        }
+    }
+}
+
+let centrePoint = [2, 4]
+let moveable = generateTetris(centrePoint[0],centrePoint[1]);
+moveable.forEach(element => {
+    console.log(element)
+    arr[element[0]][element[1]] = true;
+    //document.querySelector('#node'+element[0]+'-'+element[1]).classList.add('wall');
+});
+render()
 setInterval(() => {
     let tempMoveable = moveable.map((item)=>[item[0]+1,item[1]])
-    for(let i = 0; i < moveable.length; i++) {
-        arr[moveable[i][0]][moveable[i][1]] = false;
-        document.querySelector('#node'+moveable[0][0]+'-'+moveable[0][1]).classList.remove('wall');
-        arr[tempMoveable[0][0]][tempMoveable[0][1]] = true;
-        document.querySelector('#node'+tempMoveable[0][0]+'-'+tempMoveable[0][1]).classList.add('wall');
-    }
+    moveable.forEach((item)=>{arr[item[0]][item[1]] = false})
+    tempMoveable.forEach((item)=>{arr[item[0]][item[1]] = true})
+    render()
     moveable = tempMoveable;
 }, 500);
