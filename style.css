@@ -16,3 +16,6 @@
 .wall {
     background-color: blue;
 }
+.norender {
+    visibility: hidden;
+}

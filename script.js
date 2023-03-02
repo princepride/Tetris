@@ -1,21 +1,9 @@
-const ROW = 20;
+const ROW = 22;
 const COLUMN = 10;
 let container = document.querySelector('#container');
 let ground = document.createElement('div'); 
-document.addEventListener('keydown', (event) => {
-    //space 32
-    //A 65
-    //D 68
-    if(event.keyCode === 32) {
+let centrePoint = [2, 4]
 
-    }
-    else if(event.keyCode === 65) {
-
-    }
-    else if(event.keyCode === 68) {
-
-    }
-})
 ground.className = 'ground';
 for(let i = 0; i < ROW; i++) {
     let line = document.createElement('div'); 
@@ -24,6 +12,9 @@ for(let i = 0; i < ROW; i++) {
     for(let j = 0; j < COLUMN; j++) {
         let node = document.createElement('div');
         node.className = 'node';
+        if(i<2){
+            node.classList.add('norender');
+        }
         node.id = 'node'+i+'-'+j;
         line.appendChild(node);
     }
@@ -31,10 +22,11 @@ for(let i = 0; i < ROW; i++) {
 }
 container.appendChild(ground);
 // centre point (1, 4)
+let type = 0;
 const generateTetris = (x, y) => {
-    let a = Math.random()*7;
+    type = Math.random()*7;
     //长条
-    if (a <= 1) {
+    if (type <= 1) {
         return [
             [x, y],
             [x - 1, y],
@@ -43,7 +35,7 @@ const generateTetris = (x, y) => {
           ]
     }
     //方形
-    else if (a <= 2){
+    else if (type <= 2){
         return [
             [x, y], 
             [x, y + 1], 
@@ -52,7 +44,7 @@ const generateTetris = (x, y) => {
           ]
     }
     //L型
-    else if (a <= 3){
+    else if (type <= 3){
         return [
             [x, y], 
             [x, y + 1], 
@@ -61,7 +53,7 @@ const generateTetris = (x, y) => {
           ]
     }
     //反L
-    else if (a <= 4){
+    else if (type <= 4){
         return [
             [x, y], 
             [x, y + 1], 
@@ -70,7 +62,7 @@ const generateTetris = (x, y) => {
           ]
     }
     //Z型
-    else if (a <= 5){
+    else if (type <= 5){
         return [
             [x, y], 
             [x, y + 1], 
@@ -79,7 +71,7 @@ const generateTetris = (x, y) => {
           ]
     }
     //反Z
-    else if (a <= 6){
+    else if (type <= 6){
         return [
             [x, y], 
             [x, y + 1], 
@@ -132,18 +124,40 @@ const render = () => {
     }
 }
 
-let centrePoint = [2, 4]
+document.addEventListener('keydown', (event) => {
+    //space 32
+    //A 65
+    //D 68
+    //W 87
+    //S 83
+    if(event.keyCode === 32) {
+        
+    }
+    else if(event.keyCode === 65) {
+        centrePoint = [centrePoint[0],centrePoint[1]-1]
+        moveable = moveable.map((item)=>[item[0],item[1]])
+    }
+    else if(event.keyCode === 68) {
+        centrePoint = [centrePoint[0],centrePoint[1]+1]
+    }
+    else if(event.keyCode === 87) {
+
+    }
+    else if(event.keyCode === 83) {
+
+    }
+})
+
 let moveable = generateTetris(centrePoint[0],centrePoint[1]);
 moveable.forEach(element => {
-    console.log(element)
     arr[element[0]][element[1]] = true;
-    //document.querySelector('#node'+element[0]+'-'+element[1]).classList.add('wall');
 });
 render()
 setInterval(() => {
     let tempMoveable = moveable.map((item)=>[item[0]+1,item[1]])
     moveable.forEach((item)=>{arr[item[0]][item[1]] = false})
     tempMoveable.forEach((item)=>{arr[item[0]][item[1]] = true})
+    centrePoint = [centrePoint[0]+1,centrePoint[1]]
     render()
     moveable = tempMoveable;
 }, 500);
